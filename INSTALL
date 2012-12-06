@@ -1,0 +1,34 @@
+Hello moodle user,
+
+In the instructions below, MOODLE_HOME is the path to where your Moodle is
+deployed in your server.
+
+To install this plugin:
+
+1- Upload/unpack everything under:
+MOODLE_HOME/auth/emailadmin
+
+1.5 - Customize the email messages under lang/en/auth_emailadmin.php. If you
+do it later, you may have to "Purge All Caches". See below.
+
+2- Login to Moodle with your admin account.
+
+3- Go to:
+Site Administration --> Plugins --> Authentication --> Manage Authentication
+
+4- Enable "Email-based self-registration with admin configuration".
+
+5- On the same page, below "Common settings", for "Self registration", select
+"Email-based self-registration with admin confirmation".
+
+6- Save changes
+
+7- If you customize the email messages after the plugin was loaded, go to:
+Development --> Purge all caches
+
+8- Purge the caches.
+
+9- Try it out!
+
+Questions? Email felipe AT carassonet DOT org
+
