@@ -8,6 +8,10 @@ To install this plugin:
 1- Upload/unpack everything under:
 MOODLE_HOME/auth/emailadmin
 
+NOTE: if the package you got the files from put them within a single folder,
+remove the folder. For example, there should *NOT* be a "moodle-auth_emailadmin"
+folder under "MOODLE_HOME/auth/emailadmin".
+
 1.5 - Customize the email messages under lang/en/auth_emailadmin.php. If you
 do it later, you may have to "Purge All Caches". See below.
 
