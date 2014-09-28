@@ -32,7 +32,7 @@ function send_confirmation_email_user($user) {
     global $CFG;
 
     $site = get_site();
-    $supportuser = generate_email_supportuser();
+    $supportuser = core_user::get_support_user();
 
     $data = new stdClass();
     $data->firstname = fullname($user);
@@ -61,7 +61,8 @@ $p = optional_param('p', '', PARAM_ALPHANUM);   // Old parameter:  secret
 $s = optional_param('s', '', PARAM_RAW);        // Old parameter:  username
 
 $PAGE->set_url('/auth/emailadmin/confirm.php');
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+//$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 if (empty($CFG->registerauth)) {
     print_error('cannotusepage2');
@@ -120,6 +121,7 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         echo $OUTPUT->footer();
         exit;
     } else {
+        mtrace("Confirm returned: ". $confirmed);
         print_error('invalidconfirmdata');
     }
 } else {

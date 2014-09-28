@@ -87,7 +87,17 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         profile_save_data($user);
 
         $user = $DB->get_record('user', array('id'=>$user->id));
-        events_trigger('user_created', $user);
+        //events_trigger('user_created', $user);
+        $usercontext = context_user::instance($user->id);
+        $event = \core\event\user_created::create(
+            array(
+                'objectid' => $user->id,
+                'relateduserid' => $user->id,
+                'context' => $usercontext
+                )
+            );
+        $event->trigger();
+
 
         if (! $this->send_confirmation_email_support($user)) {
             print_error('auth_emailadminnoemail','auth_emailadmin');
@@ -130,6 +140,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
                 return AUTH_CONFIRM_ALREADY;
 
             } else if ($user->auth != $this->authtype) {
+                mtrace("Auth mismatch for user ". $user->username .": ". $user->auth ." != ". $this->authtype);
                 return AUTH_CONFIRM_ERROR;
 
             } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
@@ -140,6 +151,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
                 return AUTH_CONFIRM_OK;
             }
         } else {
+            mtrace("User not found: ". $username);
             return AUTH_CONFIRM_ERROR;
         }
     }
@@ -232,7 +244,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         global $CFG;
     
         $site = get_site();
-        $supportuser = generate_email_supportuser();
+        $supportuser = core_user::get_support_user();
     
 
         $data = new stdClass();
