@@ -260,7 +260,23 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         // Add custom fields
         $data->userdata .= $this->list_custom_fields($user);
     
-        $subject = get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname));
+        // (FECA) Crazy hack to reuse existing language logic (who knows, it could have been customized or something):
+        global $USER, $COURSE, $SESSION;
+        $langHack = stdClass();
+        $langHack->forcelang = $supportuser->lang;
+        $langHack->lang = $supportuser->lang;
+        $hackBackup = ['USER'=>false,'COURSE'=>false,'SESSION'=>false];
+        foreach ($hackBackup as $hackBackupKey => $hackBackupValue) {
+            $hackBackup[$hackBackupKey] = $GLOBALS[$hackBackupKey];
+            $GLOBALS[$hackBackupKey] = $langHack;
+        }
+        $useLang = current_language();
+        foreach ($hackBackup as $hackBackupKey => $hackBackupValue) {
+            $GLOBALS[$hackBackupKey] = $hackBackupValue;
+        }
+        // (FECA) End of crazy hack. Could just have repeated some ifs or just uses $CFG as suggested by ewallah, but no... I had to do something crazy, hadn't I?
+        
+        $subject = get_string_manager->get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname), $useLang);
     
         $username = urlencode($user->username);
         $username = str_replace('.', '%2E', $username); // prevent problems with trailing dots
