@@ -130,6 +130,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
                 return AUTH_CONFIRM_ALREADY;
 
             } else if ($user->auth != $this->authtype) {
+                mtrace("Auth mismatch for user ". $user->username .": ". $user->auth ." != ". $this->authtype);
                 return AUTH_CONFIRM_ERROR;
 
             } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
@@ -140,6 +141,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
                 return AUTH_CONFIRM_OK;
             }
         } else {
+            mtrace("User not found: ". $username);
             return AUTH_CONFIRM_ERROR;
         }
     }
@@ -207,8 +209,18 @@ class auth_plugin_emailadmin extends auth_plugin_base {
             $config->recaptcha = false;
         }
 
+        /*
+         *  -1: First admin user found (default)
+         *  -2: All admin users
+         * >=0: Specific user id 
+         */
+        if (!isset($config->notif_strategy) || !is_numeric($config->notif_strategy) || $config->notif_strategy < -2) {
+            $config->notif_strategy = -1; // Default: first admin user found
+        }
+
         // save settings
         set_config('recaptcha', $config->recaptcha, 'auth/emailadmin');
+        set_config('notif_strategy', $config->notif_strategy, 'auth/emailadmin');
         return true;
     }
 
@@ -230,6 +242,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      */
     function send_confirmation_email_support($user) {
         global $CFG;
+        $config = $this->config;
     
         $site = get_site();
         $supportuser = generate_email_supportuser();
@@ -261,13 +274,58 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         //directly email rather than using the messaging system to ensure its not routed to a popup or jabber
         $admins = get_admins();
         $return = false;
+        $admin_found = false;
 
         // Send message to fist admin (main) only. Remove "break" for all admins
+        error_log(print_r($config->notif_strategy, true));
+        $config->notif_strategy = intval($config->notif_strategy);
+        $send_list = array();
         foreach ($admins as $admin) {
-            $return |= email_to_user($admin, $supportuser, $subject, $message, $messagehtml);
-            break;
+            error_log(print_r( $config->notif_strategy . ":" . $admin->id, true ));
+            if ($config->notif_strategy < 0 || $config->notif_strategy == $admin->id) {
+                $admin_found = true;
+            }
+            if ($admin_found) {
+                $send_list[] = $admin;
+                if ($config->notif_strategy == -1 || $config->notif_strategy >= 0 ) {
+                    break;
+                }
+            }
         }
 
+        $errors = array();
+        foreach ($send_list as $admin) {
+            $result = email_to_user($admin, $supportuser, $subject, $message, $messagehtml);
+            $return |= $result;
+            if ($result) {
+                $errors[] = $admin->username;
+            }
+        }
+
+        $error = '';
+        if (!$admin_found) {
+            $error = get_string("auth_emailadminnoadmin", "auth_emailadmin");
+        }
+
+        if (count($errors) > 0) {
+            $error = get_string("auth_emailadminnotif_failed", "auth_emailadmin");
+            foreach($errors as $admin) {
+                $error .= $admin . " ";
+            }
+        }
+
+        if ($error != '') {
+            error_log($error);
+            $subject = get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname));
+            $message = $error . "\n" . get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data);
+            $messagehtml = text_to_html(get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data), false, false, true);
+            foreach($admins as $admin) {
+                if (!in_array($admin->username, $errors)) {
+                    $result = email_to_user($admin, $supportuser, $subject, $message, $messagehtml);
+                }
+            }
+        }
+        
         return $return;
     }
 

@@ -24,7 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['auth_emailadmindescription'] = '<p>Email-based self-registration with Admin confirmation enables a user to create their own account via a \'Create new account\' button on the login page. The site admins then receives an email containing a secure link to a page where they can confirm the account. Future logins just check the username and password against the stored values in the Moodle database.</p><p>Note: In addition to enabling the plugin, email-based self-registration with admin confirmation must also be selected from the self registration drop-down menu on the \'Manage authentication\' page.</p>';
+$string['auth_emailadmindescription'] = '<p>Email-based self-registration with Admin confirmation enables a user to create their own account via a \'Create new account\' button on the login page. The site admins then receive an email containing a secure link to a page where they can confirm the account. Future logins just check the username and password against the stored values in the Moodle database.</p><p>Note: In addition to enabling the plugin, email-based self-registration with admin confirmation must also be selected from the self registration drop-down menu on the \'Manage authentication\' page.</p>';
 $string['auth_emailadminnoemail'] = 'Tried to send you an email but failed!';
 $string['auth_emailadminrecaptcha'] = 'Adds a visual/audio confirmation form element to the signup page for email self-registering users. This protects your site against spammers and contributes to a worthwhile cause. See http://www.google.com/recaptcha/learnmore for more details. <br /><em>PHP cURL extension is required.</em>';
 $string['auth_emailadminrecaptcha_key'] = 'Enable reCAPTCHA element';
@@ -89,4 +89,11 @@ $string['auth_emailadminconfirmationsubject'] = '{$a}: account confirmation';
 $string['auth_emailadminconfirmsent'] = '<p>
 Your account has been registered and is pending confirmation by the administrator. You should expect to either receive a confirmation or to be contacted for further clarification.</p>
 ';
+$string['auth_emailadminnotif_failed'] = 'Could not send registration notification to: ';
+$string['auth_emailadminnoadmin'] = 'No admin found based on notification strategy. Please check auth_emailadmin configuration.';
+$string['auth_emailadminnotif_strategy_key'] = 'Notification strategy:';
+$string['auth_emailadminnotif_strategy'] = 'Defines the strategy to send the registration notifications. Available options are "first" admin user, "all" admin users or one specific admin user.';
+$string['auth_emailadminnotif_strategy_first'] = 'First admin user';
+$string['auth_emailadminnotif_strategy_all'] = 'All admin users';
+
 $string['pluginname'] = 'Email-based self-registration with admin confirmation';

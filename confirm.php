@@ -120,6 +120,7 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         echo $OUTPUT->footer();
         exit;
     } else {
+        mtrace("Confirm returned: ". $confirmed);
         print_error('invalidconfirmdata');
     }
 } else {
