@@ -87,7 +87,17 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         profile_save_data($user);
 
         $user = $DB->get_record('user', array('id'=>$user->id));
-        events_trigger('user_created', $user);
+        //events_trigger('user_created', $user);
+        $usercontext = context_user::instance($user->id);
+        $event = \core\event\user_created::create(
+            array(
+                'objectid' => $user->id,
+                'relateduserid' => $user->id,
+                'context' => $usercontext
+                )
+            );
+        $event->trigger();
+
 
         if (! $this->send_confirmation_email_support($user)) {
             print_error('auth_emailadminnoemail','auth_emailadmin');
@@ -245,7 +255,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $config = $this->config;
     
         $site = get_site();
-        $supportuser = generate_email_supportuser();
+        $supportuser = core_user::get_support_user();
     
 
         $data = new stdClass();

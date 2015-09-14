@@ -32,40 +32,40 @@ $string['auth_emailadminsettings'] = 'Settings';
 $string['auth_emailadminuserconfirmation'] = '
 Hello {$a->firstname},
 
-Welcome to the iCollaboratory! Your account has been approved. If you have not already done so, please tell us how you discovered the iCollaboratory.
+Welcome to (My Organization)! Your account has been approved. If you have not already done so, please tell us how you discovered (My Organization).
 
-For student accounts, please let us know the project you would like to participate in and we will create your teacher account. The information for creating student accounts is  at http://www.icollaboratory.org/student-accounts <a href=http://www.icollaboratory.org/student-accounts>here</a>.
+For student accounts, please let us know the project you would like to participate in and we will create your teacher account. The information for creating student accounts is  at http://www.my.org/student-accounts <a href=http://www.my.org/student-accounts>here</a>.
 
 The first name needs to be the students "first name" and "first initial of the last name." The students last name will be the school name. Passwords need to be at least 8 characters long.
 
-We\'re delighted you have joined us and hope to see you and your students participating in some of our projects. You are now a member of a rapidly growing community of educators and students using the iCollaboratory to share  projects, work and knowledge. If you ever need help don\'t hesitate to write to us at icollaboratory@gmail.com <a href=mailto:icollaboratory@gmail.com>here</a>. We\'ll try to address any questions, comments or concerns you may have regarding the iCollaboratory with Google  Resources, Services and Tools. Check out our web pages at  http://www.icollaboratory.org <a href=http://www.icollaboratory.org/>here</a>
+We\'re delighted you have joined us and hope to see you and your students participating in some of our projects. You are now a member of a rapidly growing community of educators and students using (My Organization) to share  projects, work and knowledge. If you ever need help don\'t hesitate to write to us at myorg@gmail.com <a href=mailto:myorg@gmail.com>here</a>. We\'ll try to address any questions, comments or concerns you may have regarding the (My Organization) with Google  Resources, Services and Tools. Check out our web pages at  http://www.my.org <a href=http://www.my.org/>here</a>
 
 * * *
 
-What is the iCollaboratory?
+What is (My Organization)?
 
-The iCollaboratory is an easy-to-use, Internet-based collaborative environment that enables educators to develop and manage Web-based curricular projects, share information, and work together on an international level. The iCollaboratory provides a variety of  Google tools and gadgets including integrated messaging, conferencing, and calendars, to support collaboration among teachers and students within the iCollaboratory.
+(My Organization) is an easy-to-use, Internet-based collaborative environment that enables educators to develop and manage Web-based curricular projects, share information, and work together on an international level. (My Organization) provides a variety of  Google tools and gadgets including integrated messaging, conferencing, and calendars, to support collaboration among teachers and students within (My Organization).
 
-The iCollaboratory welcomes your projects and is looking forward to sharing a rich variety of projects and activities with your  participating students. When you login, list of popular categories appears. Click on one of the categories to browse the projects specified by it.  As you browse through these projects (click on the titles), they may help you generate an idea or two for you to use in developing a project of your own in the iCollaboratory or they may help you to identify projects in which
+(My Organization) welcomes your projects and is looking forward to sharing a rich variety of projects and activities with your  participating students. When you login, list of popular categories appears. Click on one of the categories to browse the projects specified by it.  As you browse through these projects (click on the titles), they may help you generate an idea or two for you to use in developing a project of your own in (My Organization) or they may help you to identify projects in which
 you may like to collaborate with other teachers and their students.
 
 * * *
 
-Because the iCollaboratory is project driven and run by volunteers, we would like you to consider creating a project in the iCollaboratory or volunteering to help with one. If you decide you would like to create a project or volunteer to help or support other projects,  please email us at icollaboratory@gmail.com <a href=mailto:icollaboratory@gmail.com>here</a>. The iCollaboratory leaders and volunteers are here to support your needs.
+Because (My Organization) is project driven and run by volunteers, we would like you to consider creating a project in (My Organization) or volunteering to help with one. If you decide you would like to create a project or volunteer to help or support other projects,  please email us at myorg@gmail.com <a href=mailto:myorg@gmail.com>here</a>. (My Organization) leaders and volunteers are here to support your needs.
 
-Remember,  online support for all iCollaboratory participants is provided by iCollaboratory volunteers. Please take what you learn from us and help other teachers learn too! We look forward to working with you and seeing your new projects!
+Remember,  online support for all (My Organization) participants is provided by (My Organization) volunteers. Please take what you learn from us and help other teachers learn too! We look forward to working with you and seeing your new projects!
 
 
 Thank you,
 
-Bonnie Thurber, Director
-and Theresa Allen, Gayle Greenwald, Karen Ladendorf, Linda Smentek,  and Ruth Shunick, the  iCollaboratory Team
+My Name, Director
+
 
 --
-iCollaboratory Team
-<a href=http://www.icollaboratory.org/>http://www.icollaboratory.org</a>
-<a href=mailto:iCollaboratory@gmail.com>iCollaboratory@gmail.com</a>
-<a href=tel:847%20331%204633>847 331 4633</a>
+(My Organization) Team
+<a href=http://www.my.org/>http://www.my.org</a>
+<a href=mailto:myorg@gmail.com>myorg@gmail.com</a>
+<a href=tel:123%20555%205555>123 555 5555</a>
 
 ';
 $string['auth_emailadminconfirmation'] = '
