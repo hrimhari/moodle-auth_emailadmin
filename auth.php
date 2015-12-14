@@ -166,7 +166,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @return bool
      */
     function is_internal() {
-        return true;
+        return false;
     }
 
     /**
