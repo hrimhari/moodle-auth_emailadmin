@@ -73,6 +73,13 @@ Hi Moodle Admin,
 
 A new account has been requested at \'{$a->sitename}\' with  the following data:
 
+Any specific user field example:
+user->lastname: {$a->lastname}
+
+All custom fields:
+{$a->customfields}
+
+All user fields + custom fields:
 {$a->userdata}
 
 To confirm the new account, please go to this web address:

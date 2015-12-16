@@ -258,24 +258,29 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $supportuser = core_user::get_support_user();
     
 
-        $data = new stdClass();
-        $data->firstname = fullname($user);
-        $data->sitename  = format_string($site->fullname);
-        $data->admin     = generate_email_signoff();
+        $data = array();
 
-        $data->userdata = '';
+        // Text compilation of all user fields
+        $data["userdata"] = '';
+
         foreach(((array) $user) as $dataname => $datavalue) {
-            $data->userdata	 .= $dataname . ': ' . $datavalue . PHP_EOL;
+            if ( $dataname == "userdata" ) continue;
+
+            $data[$dataname]      = $datavalue;
+            $data["userdata"]      .= $dataname . ': ' . $datavalue . PHP_EOL;
         }
+        $data["sitename"]  = format_string($site->fullname);
+        $data["admin"]     = generate_email_signoff();
 
         // Add custom fields
-        $data->userdata .= $this->list_custom_fields($user);
+        $data["customfields"] = $this->list_custom_fields($user);
+        $data["userdata"] .= $data["customfields"];
     
         $subject = get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname));
     
         $username = urlencode($user->username);
         $username = str_replace('.', '%2E', $username); // prevent problems with trailing dots
-        $data->link  = $CFG->wwwroot .'/auth/emailadmin/confirm.php?data='. $user->secret .'/'. $username;
+        $data["link"] = $CFG->wwwroot .'/auth/emailadmin/confirm.php?data='. $user->secret .'/'. $username;
         $message     = get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data);
         $messagehtml = text_to_html(get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data), false, false, true);
     
