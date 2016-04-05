@@ -328,7 +328,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         foreach ($send_list as $admin) {
             $result = email_to_user($admin, $supportuser, $subject, $message, $messagehtml);
             $return |= $result;
-            if ($result) {
+            if (! $result) {
                 $errors[] = $admin->username;
             }
         }
