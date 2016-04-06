@@ -278,7 +278,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
     
         // (FECA) Crazy hack to reuse existing language logic (who knows, it could have been customized or something):
         global $USER, $COURSE, $SESSION;
-        $langHack = stdClass();
+        $langHack = new stdClass();
         $langHack->forcelang = $supportuser->lang;
         $langHack->lang = $supportuser->lang;
         $hackBackup = ['USER'=>false,'COURSE'=>false,'SESSION'=>false];
