@@ -298,7 +298,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $username = str_replace('.', '%2E', $username); // prevent problems with trailing dots
         $data["link"] = $CFG->wwwroot .'/auth/emailadmin/confirm.php?data='. $user->secret .'/'. $username;
         $message     = get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data);
-        $messagehtml = text_to_html(get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data), false, false, true);
+        $messagehtml = text_to_html($message, false, false, true);
     
         $user->mailformat = 1;  // Always send HTML version as well
     
@@ -349,7 +349,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
             error_log($error);
             $subject = get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname));
             $message = $error . "\n" . get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data);
-            $messagehtml = text_to_html(get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data), false, false, true);
+            $messagehtml = text_to_html($message, false, false, true);
             foreach($admins as $admin) {
                 if (!in_array($admin->username, $errors)) {
                     $result = email_to_user($admin, $supportuser, $subject, $message, $messagehtml);
