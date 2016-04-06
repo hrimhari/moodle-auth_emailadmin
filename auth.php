@@ -292,7 +292,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         }
         // (FECA) End of crazy hack. Could just have repeated some ifs or just uses $CFG as suggested by ewallah, but no... I had to do something crazy, hadn't I?
         
-        $subject = get_string_manager->get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname), $useLang);
+        $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname), $useLang);
     
         $username = urlencode($user->username);
         $username = str_replace('.', '%2E', $username); // prevent problems with trailing dots
