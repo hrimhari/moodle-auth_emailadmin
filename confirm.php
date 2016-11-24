@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -42,26 +41,25 @@ function send_confirmation_email_user($user) {
     $subject = get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname));
 
     $username = urlencode($user->username);
-    $username = str_replace('.', '%2E', $username); // prevent problems with trailing dots
+    $username = str_replace('.', '%2E', $username); // Prevent problems with trailing dots.
     $data->link  = $CFG->wwwroot;
     $data->username = $username;
     $message     = get_string('auth_emailadminuserconfirmation', 'auth_emailadmin', $data);
     $messagehtml = text_to_html(get_string('auth_emailadminuserconfirmation', 'auth_emailadmin', $data), false, false, true);
 
-    $user->mailformat = 1;  // Always send HTML version as well
+    $user->mailformat = 1;  // Always send HTML version as well.
 
-    //directly email rather than using the messaging system to ensure its not routed to a popup or jabber
+    // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
 
     return email_to_user($user, $supportuser, $subject, $message, $messagehtml);
 }
 
-$data = optional_param('data', '', PARAM_RAW);  // Formatted as:  secret/username
+$data = optional_param('data', '', PARAM_RAW);  // Formatted as:  secret/username.
 
-$p = optional_param('p', '', PARAM_ALPHANUM);   // Old parameter:  secret
-$s = optional_param('s', '', PARAM_RAW);        // Old parameter:  username
+$p = optional_param('p', '', PARAM_ALPHANUM);   // Old parameter:  secret.
+$s = optional_param('s', '', PARAM_RAW);        // Old parameter:  username.
 
 $PAGE->set_url('/auth/emailadmin/confirm.php');
-//$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 $PAGE->set_context(context_system::instance());
 
 if (empty($CFG->registerauth)) {
@@ -76,7 +74,7 @@ if (!$authplugin->can_confirm()) {
 if (!empty($data) || (!empty($p) && !empty($s))) {
 
     if (!empty($data)) {
-        $dataelements = explode('/', $data, 2); // Stop after 1st slash. Rest is username. MDL-7647
+        $dataelements = explode('/', $data, 2); // Stop after 1st slash. Rest is username. MDL-7647.
         $usersecret = $dataelements[0];
         $username   = $dataelements[1];
     } else {
