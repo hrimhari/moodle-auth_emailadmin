@@ -19,7 +19,9 @@
    </td>
 </tr>
 <tr>
-    <td align="right"><label for="menurecaptcha"><?php print_string('auth_emailadminrecaptcha_key', 'auth_emailadmin') ?></label></td>
+    <td align="right"><label for="menurecaptcha"><?php
+        print_string('auth_emailadminrecaptcha_key', 'auth_emailadmin');
+        ?></label></td>
     <td><?php
         global $OUTPUT;
         echo html_writer::select($yesno, 'recaptcha', $config->recaptcha, false);
@@ -27,12 +29,16 @@
     <td><?php print_string('auth_emailadminrecaptcha', 'auth_emailadmin') ?></td>
 </tr>
 <tr>
-    <td align="right"><label for="notif_strategy"><?php print_string("auth_emailadminnotif_strategy_key", "auth_emailadmin") ?></label></td>
+    <td align="right"><label for="notif_strategy"><?php
+        print_string("auth_emailadminnotif_strategy_key", "auth_emailadmin");
+        ?></label></td>
     <td><?php
         global $OUTPUT;
-        $options = array('-1' => get_string("auth_emailadminnotif_strategy_first", "auth_emailadmin"), '-2' => get_string("auth_emailadminnotif_strategy_all", "auth_emailadmin"));
+        $options = array('-1' => get_string("auth_emailadminnotif_strategy_first", "auth_emailadmin"), 
+            '-2' => get_string("auth_emailadminnotif_strategy_all", "auth_emailadmin")
+            );
         $admins = get_admins();
-        foreach($admins as $admin) {
+        foreach ($admins as $admin) {
             $options[$admin->id] = $admin->username;
         }
 
