@@ -281,8 +281,9 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         // Text compilation of all user fields except the password.
         $data["userdata"] = '';
 
+        $skip = array("userdata", "password", "secret");
         foreach (((array) $user) as $dataname => $datavalue) {
-            if ( $dataname == "userdata" || $dataname == "password" ) {
+            if ( in_array($dataname, $skip) ) {
                 continue;
             }
 
