@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @author Felipe Carasso
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
