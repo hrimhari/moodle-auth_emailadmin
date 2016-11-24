@@ -1,18 +1,31 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
+ * Authentication Plugin: Email Authentication with admin confirmation
+ *
  * @author Felipe Carasso
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodle multiauth
- *
- * Authentication Plugin: Email Authentication with admin confirmation
- *
- * Standard authentication function.
  *
  * 2012-12-03  File created based on 'email' package by Martin Dougiamas.
  */
 
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page.
+    die('Direct access to this script is forbidden.');    // It must be included from a Moodle page.
 }
 
 require_once($CFG->libdir.'/authlib.php');
@@ -91,7 +104,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         // Save any custom profile field information.
         profile_save_data($user);
 
-        $user = $DB->get_record('user', array('id'=>$user->id));
+        $user = $DB->get_record('user', array('id' => $user->id));
 
         $usercontext = context_user::instance($user->id);
         $event = \core\event\user_created::create(
@@ -148,7 +161,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
                 return AUTH_CONFIRM_ERROR;
 
             } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in.
-                $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));
+                $DB->set_field("user", "confirmed", 1, array("id" => $user->id));
                 if ($user->firstaccess == 0) {
                     $DB->set_field("user", "firstaccess", time(), array("id" => $user->id));
                 }
@@ -244,8 +257,8 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      */
     public function is_captcha_enabled() {
         global $CFG;
-        return isset($CFG->recaptchapublickey) && 
-            isset($CFG->recaptchaprivatekey) && 
+        return isset($CFG->recaptchapublickey) &&
+            isset($CFG->recaptchaprivatekey) &&
             get_config("auth/{$this->authtype}", 'recaptcha');
     }
 
@@ -259,17 +272,19 @@ class auth_plugin_emailadmin extends auth_plugin_base {
     public function send_confirmation_email_support($user) {
         global $CFG;
         $config = $this->config;
-    
+
         $site = get_site();
         $supportuser = core_user::get_support_user();
-    
+
         $data = array();
 
         // Text compilation of all user fields except the password.
         $data["userdata"] = '';
 
         foreach (((array) $user) as $dataname => $datavalue) {
-            if ( $dataname == "userdata" || $dataname == "password" ) continue;
+            if ( $dataname == "userdata" || $dataname == "password" ) {
+                continue;
+            }
 
             $data[$dataname]      = $datavalue;
             $data["userdata"]      .= $dataname . ': ' . $datavalue . PHP_EOL;
@@ -286,7 +301,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $lang_hack = new stdClass();
         $lang_hack->forcelang = $supportuser->lang;
         $lang_hack->lang = $supportuser->lang;
-        $hack_backup = ['USER' => false,'COURSE' => false,'SESSION' => false];
+        $hack_backup = ['USER' => false, 'COURSE' => false, 'SESSION' => false];
         foreach ($hack_backup as $hack_backup_key => $hack_backup_value) {
             $hack_backup[$hack_backup_key] = $GLOBALS[$hack_backup_key];
             $GLOBALS[$hack_backup_key] = $lang_hack;
@@ -295,11 +310,14 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         foreach ($hack_backup as $hack_backup_key => $hack_backup_value) {
             $GLOBALS[$hack_backup_key] = $hack_backup_value;
         }
-        /* (FECA) End of crazy hack. Could just have repeated some ifs or just uses $CFG as suggested by ewallah, but no... 
+        /* (FECA) End of crazy hack. Could just have repeated some ifs or just uses $CFG as suggested by ewallah, but no...
          * I had to do something crazy, hadn't I?
          */
 
-        $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname), $use_lang);
+        $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject',
+                                                    'auth_emailadmin',
+                                                    format_string($site->fullname),
+                                                    $use_lang);
 
         $username = urlencode($user->username);
         $username = str_replace('.', '%2E', $username); // Prevent problems with trailing dots.
@@ -347,7 +365,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
 
         if (count($errors) > 0) {
             $error = get_string("auth_emailadminnotif_failed", "auth_emailadmin");
-            foreach($errors as $admin) {
+            foreach ($errors as $admin) {
                 $error .= $admin . " ";
             }
         }
@@ -357,7 +375,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
             $subject = get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname));
             $message = $error . "\n" . get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data);
             $messagehtml = text_to_html($message, false, false, true);
-            foreach($admins as $admin) {
+            foreach ($admins as $admin) {
                 if (!in_array($admin->username, $errors)) {
                     $result = email_to_user($admin, $supportuser, $subject, $message, $messagehtml);
                 }
