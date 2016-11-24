@@ -12,7 +12,7 @@
  */
 
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page.
 }
 
 require_once($CFG->libdir.'/authlib.php');
@@ -27,7 +27,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_emailadmin() {
+    public function __construct() {
         $this->authtype = 'emailadmin';
         $this->config = get_config('auth/emailadmin');
     }
@@ -40,9 +40,9 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @param string $password The password
      * @return bool Authentication success or failure.
      */
-    function user_login ($username, $password) {
+    public function user_login ($username, $password) {
         global $CFG, $DB;
-        if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
+        if ($user = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id))) {
             return validate_internal_user_password($user, $password);
         }
         return false;
@@ -58,12 +58,12 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @return boolean result
      *
      */
-    function user_update_password($user, $newpassword) {
+    public function user_update_password($user, $newpassword) {
         $user = get_complete_user_data('id', $user->id);
         return update_internal_user_password($user, $newpassword);
     }
 
-    function can_signup() {
+    public function can_signup() {
         return true;
     }
 
@@ -74,7 +74,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @param object $user new user object
      * @param boolean $notify print notice with link and terminate
      */
-    function user_signup($user, $notify=true) {
+    public function user_signup($user, $notify=true) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
 
@@ -82,11 +82,11 @@ class auth_plugin_emailadmin extends auth_plugin_base {
 
         $user->id = $DB->insert_record('user', $user);
 
-        /// Save any custom profile field information
+        // Save any custom profile field information.
         profile_save_data($user);
 
         $user = $DB->get_record('user', array('id'=>$user->id));
-        //events_trigger('user_created', $user);
+
         $usercontext = context_user::instance($user->id);
         $event = \core\event\user_created::create(
             array(
@@ -97,9 +97,8 @@ class auth_plugin_emailadmin extends auth_plugin_base {
             );
         $event->trigger();
 
-
         if (! $this->send_confirmation_email_support($user)) {
-            print_error('auth_emailadminnoemail','auth_emailadmin');
+            print_error('auth_emailadminnoemail', 'auth_emailadmin');
         }
 
         if ($notify) {
@@ -120,7 +119,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return bool
      */
-    function can_confirm() {
+    public function can_confirm() {
         return true;
     }
 
@@ -130,7 +129,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @param string $username
      * @param string $confirmsecret
      */
-    function user_confirm($username, $confirmsecret) {
+    public function user_confirm($username, $confirmsecret) {
         global $DB;
         $user = get_complete_user_data('username', $username);
 
@@ -142,10 +141,10 @@ class auth_plugin_emailadmin extends auth_plugin_base {
                 mtrace("Auth mismatch for user ". $user->username .": ". $user->auth ." != ". $this->authtype);
                 return AUTH_CONFIRM_ERROR;
 
-            } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
+            } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in.
                 $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));
                 if ($user->firstaccess == 0) {
-                    $DB->set_field("user", "firstaccess", time(), array("id"=>$user->id));
+                    $DB->set_field("user", "firstaccess", time(), array("id" => $user->id));
                 }
                 return AUTH_CONFIRM_OK;
             }
@@ -155,7 +154,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         }
     }
 
-    function prevent_local_passwords() {
+    public function prevent_local_passwords() {
         return false;
     }
 
@@ -164,7 +163,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return bool
      */
-    function is_internal() {
+    public function is_internal() {
         return true;
     }
 
@@ -174,7 +173,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return bool
      */
-    function can_change_password() {
+    public function can_change_password() {
         return true;
     }
 
@@ -184,8 +183,8 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return moodle_url
      */
-    function change_password_url() {
-        return null; // use default internal method
+    public function change_password_url() {
+        return null; // Use default internal method.
     }
 
     /**
@@ -193,7 +192,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return bool
      */
-    function can_reset_password() {
+    public function can_reset_password() {
         return true;
     }
 
@@ -205,15 +204,15 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err, $user_fields) {
-        include "config.html";
+    public function config_form($config, $err, $user_fields) {
+        include("config.html");
     }
 
     /**
      * Processes and stores configuration data for this authentication plugin.
      */
-    function process_config($config) {
-        // set to defaults if undefined
+    public function process_config($config) {
+        // Set to defaults if undefined.
         if (!isset($config->recaptcha)) {
             $config->recaptcha = false;
         }
@@ -221,13 +220,13 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         /*
          *  -1: First admin user found (default)
          *  -2: All admin users
-         * >=0: Specific user id 
+         * >=0: Specific user id
          */
         if (!isset($config->notif_strategy) || !is_numeric($config->notif_strategy) || $config->notif_strategy < -2) {
-            $config->notif_strategy = -1; // Default: first admin user found
+            $config->notif_strategy = -1; // Default: first admin user found.
         }
 
-        // save settings
+        // Save settings.
         set_config('recaptcha', $config->recaptcha, 'auth/emailadmin');
         set_config('notif_strategy', $config->notif_strategy, 'auth/emailadmin');
         return true;
@@ -237,9 +236,11 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
      * @return bool
      */
-    function is_captcha_enabled() {
+    public function is_captcha_enabled() {
         global $CFG;
-        return isset($CFG->recaptchapublickey) && isset($CFG->recaptchaprivatekey) && get_config("auth/{$this->authtype}", 'recaptcha');
+        return isset($CFG->recaptchapublickey) && 
+            isset($CFG->recaptchaprivatekey) && 
+            get_config("auth/{$this->authtype}", 'recaptcha');
     }
 
     /**
@@ -249,21 +250,20 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @param user $user A {@link $USER} object
      * @return bool Returns true if mail was sent OK to *any* admin and false if otherwise.
      */
-    function send_confirmation_email_support($user) {
+    public function send_confirmation_email_support($user) {
         global $CFG;
         $config = $this->config;
     
         $site = get_site();
         $supportuser = core_user::get_support_user();
     
-
         $data = array();
 
-        // Text compilation of all user fields
+        // Text compilation of all user fields except the password.
         $data["userdata"] = '';
 
-        foreach(((array) $user) as $dataname => $datavalue) {
-            if ( $dataname == "userdata" ) continue;
+        foreach (((array) $user) as $dataname => $datavalue) {
+            if ( $dataname == "userdata" || $dataname == "password" ) continue;
 
             $data[$dataname]      = $datavalue;
             $data["userdata"]      .= $dataname . ': ' . $datavalue . PHP_EOL;
@@ -271,42 +271,44 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $data["sitename"]  = format_string($site->fullname);
         $data["admin"]     = generate_email_signoff();
 
-        // Add custom fields
+        // Add custom fields.
         $data["customfields"] = $this->list_custom_fields($user);
         $data["userdata"] .= $data["customfields"];
-    
-        // (FECA) Crazy hack to reuse existing language logic (who knows, it could have been customized or something):
+
+        // (FECA) Crazy hack to reuse existing language logic (who knows, it could have been customized or something).
         global $USER, $COURSE, $SESSION;
-        $langHack = new stdClass();
-        $langHack->forcelang = $supportuser->lang;
-        $langHack->lang = $supportuser->lang;
-        $hackBackup = ['USER'=>false,'COURSE'=>false,'SESSION'=>false];
-        foreach ($hackBackup as $hackBackupKey => $hackBackupValue) {
-            $hackBackup[$hackBackupKey] = $GLOBALS[$hackBackupKey];
-            $GLOBALS[$hackBackupKey] = $langHack;
+        $lang_hack = new stdClass();
+        $lang_hack->forcelang = $supportuser->lang;
+        $lang_hack->lang = $supportuser->lang;
+        $hack_backup = ['USER' => false,'COURSE' => false,'SESSION' => false];
+        foreach ($hack_backup as $hack_backup_key => $hack_backup_value) {
+            $hack_backup[$hack_backup_key] = $GLOBALS[$hack_backup_key];
+            $GLOBALS[$hack_backup_key] = $lang_hack;
         }
-        $useLang = current_language();
-        foreach ($hackBackup as $hackBackupKey => $hackBackupValue) {
-            $GLOBALS[$hackBackupKey] = $hackBackupValue;
+        $use_lang = current_language();
+        foreach ($hack_backup as $hack_backup_key => $hack_backup_value) {
+            $GLOBALS[$hack_backup_key] = $hack_backup_value;
         }
-        // (FECA) End of crazy hack. Could just have repeated some ifs or just uses $CFG as suggested by ewallah, but no... I had to do something crazy, hadn't I?
-        
-        $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname), $useLang);
-    
+        /* (FECA) End of crazy hack. Could just have repeated some ifs or just uses $CFG as suggested by ewallah, but no... 
+         * I had to do something crazy, hadn't I?
+         */
+
+        $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname), $use_lang);
+
         $username = urlencode($user->username);
-        $username = str_replace('.', '%2E', $username); // prevent problems with trailing dots
+        $username = str_replace('.', '%2E', $username); // Prevent problems with trailing dots.
         $data["link"] = $CFG->wwwroot .'/auth/emailadmin/confirm.php?data='. $user->secret .'/'. $username;
         $message     = get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data);
         $messagehtml = text_to_html($message, false, false, true);
-    
-        $user->mailformat = 1;  // Always send HTML version as well
-    
-        //directly email rather than using the messaging system to ensure its not routed to a popup or jabber
+
+        $user->mailformat = 1;  // Always send HTML version as well.
+
+        // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
         $admins = get_admins();
         $return = false;
         $admin_found = false;
 
-        // Send message to fist admin (main) only. Remove "break" for all admins
+        // Send message to fist admin (main) only. Remove "break" for all admins.
         error_log(print_r($config->notif_strategy, true));
         $config->notif_strategy = intval($config->notif_strategy);
         $send_list = array();
@@ -355,7 +357,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
                 }
             }
         }
-        
+
         return $return;
     }
 
@@ -364,12 +366,12 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @param user $user A {@link $USER} object
      */
-    function list_custom_fields($user) {
+    public function list_custom_fields($user) {
         global $CFG, $DB;
 
         $result = '';
         if ($fields = $DB->get_records('user_info_field')) {
-            foreach($fields as $field) {
+            foreach ($fields as $field) {
                 $fieldobj = new profile_field_base($field->id, $user->id);
                 $result .= format_string($fieldobj->field->name.':') . ' ' . $fieldobj->display_data() . PHP_EOL;
             }
