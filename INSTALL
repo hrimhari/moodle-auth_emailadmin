@@ -14,8 +14,10 @@ NOTE 2: if the package you got the files from put them within a folder of its ow
 remove the files from that folder. For example, there should *NOT* be a "moodle-auth_emailadmin"
 folder under "MOODLE_HOME/auth/emailadmin".
 
-1.5 - Customize the email messages under lang/en/auth_emailadmin.php. If you
+1.1- Customize the email messages under lang/en/auth_emailadmin.php. If you
 do it later, you may have to "Purge All Caches". See below.
+
+1.2- If your Moodle is in a language other than English, you may have to make a copy of lang/en to lang/your-language.
 
 2- Login to Moodle with your admin account.
 
