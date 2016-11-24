@@ -32,6 +32,12 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $this->config = get_config('auth/emailadmin');
     }
 
+    /* Backward compatible constructor. */
+    public function auth_plugin_email() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
+    }
+
     /**
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
