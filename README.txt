@@ -10,3 +10,5 @@ When the admin clicks on the confirmation link, a "welcome" email is sent to the
 Email body is customizable within the language file.
 
 Based on default email-based self-registration module.
+
+***Please read the INSTALL file carefully***
