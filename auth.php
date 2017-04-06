@@ -30,7 +30,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
-
+require_once('classes/message.class.php');
 
 /**
  * Email authentication plugin.
@@ -59,7 +59,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @param string $password The password
      * @return bool Authentication success or failure.
      */
-    public function user_login ($username, $password) {
+    function user_login ($username, $password) {
         global $CFG, $DB;
         if ($user = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id))) {
             return validate_internal_user_password($user, $password);
@@ -77,12 +77,12 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @return boolean result
      *
      */
-    public function user_update_password($user, $newpassword) {
+    function user_update_password($user, $newpassword) {
         $user = get_complete_user_data('id', $user->id);
         return update_internal_user_password($user, $newpassword);
     }
 
-    public function can_signup() {
+    function can_signup() {
         return true;
     }
 
@@ -93,7 +93,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @param object $user new user object
      * @param boolean $notify print notice with link and terminate
      */
-    public function user_signup($user, $notify=true) {
+    function user_signup($user, $notify=true) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
 
@@ -138,7 +138,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return bool
      */
-    public function can_confirm() {
+    function can_confirm() {
         return true;
     }
 
@@ -148,7 +148,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * @param string $username
      * @param string $confirmsecret
      */
-    public function user_confirm($username, $confirmsecret) {
+    function user_confirm($username, $confirmsecret) {
         global $DB;
         $user = get_complete_user_data('username', $username);
 
@@ -165,6 +165,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
                 if ($user->firstaccess == 0) {
                     $DB->set_field("user", "firstaccess", time(), array("id" => $user->id));
                 }
+                \auth\emailadmin\message::send_confirmation_email_user($user);
                 return AUTH_CONFIRM_OK;
             }
         } else {
@@ -173,7 +174,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         }
     }
 
-    public function prevent_local_passwords() {
+    function prevent_local_passwords() {
         return false;
     }
 
@@ -182,7 +183,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return bool
      */
-    public function is_internal() {
+    function is_internal() {
         return true;
     }
 
@@ -192,7 +193,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return bool
      */
-    public function can_change_password() {
+    function can_change_password() {
         return true;
     }
 
@@ -202,7 +203,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return moodle_url
      */
-    public function change_password_url() {
+    function change_password_url() {
         return null; // Use default internal method.
     }
 
@@ -211,7 +212,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @return bool
      */
-    public function can_reset_password() {
+    function can_reset_password() {
         return true;
     }
 
@@ -223,14 +224,14 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      *
      * @param array $page An object containing all the data for this page.
      */
-    public function config_form($config, $err, $user_fields) {
+    function config_form($config, $err, $user_fields) {
         include("config.html");
     }
 
     /**
      * Processes and stores configuration data for this authentication plugin.
      */
-    public function process_config($config) {
+    function process_config($config) {
         // Set to defaults if undefined.
         if (!isset($config->recaptcha)) {
             $config->recaptcha = false;
@@ -255,7 +256,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
      * @return bool
      */
-    public function is_captcha_enabled() {
+    function is_captcha_enabled() {
         global $CFG;
         return isset($CFG->recaptchapublickey) &&
             isset($CFG->recaptchaprivatekey) &&
