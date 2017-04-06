@@ -27,33 +27,6 @@
 require('../../config.php');
 require_once($CFG->libdir.'/authlib.php');
 
-function send_confirmation_email_user($user) {
-    global $CFG;
-
-    $site = get_site();
-    $supportuser = core_user::get_support_user();
-
-    $data = new stdClass();
-    $data->firstname = fullname($user);
-    $data->sitename  = format_string($site->fullname);
-    $data->admin     = generate_email_signoff();
-
-    $subject = get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname));
-
-    $username = urlencode($user->username);
-    $username = str_replace('.', '%2E', $username); // Prevent problems with trailing dots.
-    $data->link  = $CFG->wwwroot;
-    $data->username = $username;
-    $message     = get_string('auth_emailadminuserconfirmation', 'auth_emailadmin', $data);
-    $messagehtml = text_to_html(get_string('auth_emailadminuserconfirmation', 'auth_emailadmin', $data), false, false, true);
-
-    $user->mailformat = 1;  // Always send HTML version as well.
-
-    // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-
-    return email_to_user($user, $supportuser, $subject, $message, $messagehtml);
-}
-
 $data = optional_param('data', '', PARAM_RAW);  // Formatted as:  secret/username.
 
 $p = optional_param('p', '', PARAM_ALPHANUM);   // Old parameter:  secret.
@@ -106,7 +79,6 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
             print_error('cannotfinduser', '', '', s($username));
         }
 
-        send_confirmation_email_user($user);
         $PAGE->navbar->add(get_string("confirmed"));
         $PAGE->set_title(get_string("confirmed"));
         $PAGE->set_heading($COURSE->fullname);
