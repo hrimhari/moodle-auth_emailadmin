@@ -42,7 +42,6 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'emailadmin';
-        $this->config = get_config('auth/emailadmin');
     }
 
     /* Backward compatible constructor. */
@@ -272,7 +271,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      */
     public function send_confirmation_email_support($user) {
         global $CFG;
-        $config = $this->config;
+        $config = get_config('auth/emailadmin');
 
         $site = get_site();
         $supportuser = core_user::get_support_user();
@@ -297,35 +296,9 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         // Add custom fields.
         $data["customfields"] = $this->list_custom_fields($user);
         $data["userdata"] .= $data["customfields"];
-
-        // (FECA) Crazy hack to reuse existing language logic (who knows, it could have been customized or something).
-        global $USER, $COURSE, $SESSION;
-        $lang_hack = new stdClass();
-        $lang_hack->forcelang = $supportuser->lang;
-        $lang_hack->lang = $supportuser->lang;
-        $hack_backup = ['USER' => false, 'COURSE' => false, 'SESSION' => false];
-        foreach ($hack_backup as $hack_backup_key => $hack_backup_value) {
-            $hack_backup[$hack_backup_key] = $GLOBALS[$hack_backup_key];
-            $GLOBALS[$hack_backup_key] = $lang_hack;
-        }
-        $use_lang = current_language();
-        foreach ($hack_backup as $hack_backup_key => $hack_backup_value) {
-            $GLOBALS[$hack_backup_key] = $hack_backup_value;
-        }
-        /* (FECA) End of crazy hack. Could just have repeated some ifs or just uses $CFG as suggested by ewallah, but no...
-         * I had to do something crazy, hadn't I?
-         */
-
-        $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject',
-                                                    'auth_emailadmin',
-                                                    format_string($site->fullname),
-                                                    $use_lang);
-
         $username = urlencode($user->username);
         $username = str_replace('.', '%2E', $username); // Prevent problems with trailing dots.
         $data["link"] = $CFG->wwwroot .'/auth/emailadmin/confirm.php?data='. $user->secret .'/'. $username;
-        $message     = get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data);
-        $messagehtml = text_to_html($message, false, false, true);
 
         $user->mailformat = 1;  // Always send HTML version as well.
 
@@ -335,7 +308,10 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $admin_found = false;
 
         // Send message to fist admin (main) only. Remove "break" for all admins.
-        error_log(print_r($config->notif_strategy, true));
+        if (!isset($config->notif_strategy)) {
+            $config->notif_strategy = -1;
+        }
+
         $config->notif_strategy = intval($config->notif_strategy);
         $send_list = array();
         foreach ($admins as $admin) {
@@ -353,6 +329,16 @@ class auth_plugin_emailadmin extends auth_plugin_base {
 
         $errors = array();
         foreach ($send_list as $admin) {
+            $use_lang = \auth\emailadmin\message::get_user_language($admin);
+
+            $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject',
+                                                        'auth_emailadmin',
+                                                        format_string($site->fullname),
+                                                        $use_lang);
+
+            $message     = get_string_manager()->get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data, $use_lang);
+            $messagehtml = text_to_html($message, false, false, true);
+
             $result = email_to_user($admin, $supportuser, $subject, $message, $messagehtml);
             $return |= $result;
             if (! $result) {
@@ -374,11 +360,18 @@ class auth_plugin_emailadmin extends auth_plugin_base {
 
         if ($error != '') {
             error_log($error);
-            $subject = get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname));
-            $message = $error . "\n" . get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data);
-            $messagehtml = text_to_html($message, false, false, true);
             foreach ($admins as $admin) {
                 if (!in_array($admin->username, $errors)) {
+                    $use_lang = \auth\emailadmin\message::get_user_language($admin);
+
+                    $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject',
+                                                                'auth_emailadmin',
+                                                                format_string($site->fullname),
+                                                                $use_lang);
+
+                    $message     = get_string_manager()->get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data, $use_lang);
+                    $messagehtml = text_to_html($message, false, false, true);
+
                     $result = email_to_user($admin, $supportuser, $subject, $message, $messagehtml);
                 }
             }
