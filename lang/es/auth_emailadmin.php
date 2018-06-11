@@ -57,9 +57,9 @@ está avalada por Ingenieros del Sector muy altamente cualificados, garantizando
 Gracias,
 El equipo de Virgen de la Caridad
 ---
-<a href="http://virgendelacaridad.es/">http://virgendelacaridad.es/</a>
-<a href="mailto:%66o%72%6da%63io%6e%40virg%65%6e%64%65%6c&#97;&#99;&#97;&#114;ida&#100;%2e%65s">Contacto</a>
-<a href=tel:968533192>968533192</a>
+<a href="http://virgendelacaridad.es/">http://virgendelacaridad.es/</a><br>
+<a href="mailto:%66o%72%6da%63io%6e%40virg%65%6e%64%65%6c&#97;&#99;&#97;&#114;ida&#100;%2e%65s">Contacto</a><br>
+<a href=tel:968533192>968533192</a><br>
 ';
 $string['auth_emailadminconfirmation'] = '
 Hola Admin,
