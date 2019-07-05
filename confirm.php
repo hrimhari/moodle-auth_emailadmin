@@ -26,6 +26,10 @@
 
 require('../../config.php');
 require_once($CFG->libdir.'/authlib.php');
+require_once($CFG->libdir.'/adminlib.php');
+
+require_login();
+require_capability('moodle/user:update', context_system::instance());
 
 $data = optional_param('data', '', PARAM_RAW);  // Formatted as:  secret/username.
 
