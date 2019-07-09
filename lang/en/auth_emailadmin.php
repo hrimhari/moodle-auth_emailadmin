@@ -101,5 +101,6 @@ $string['auth_emailadminnotif_strategy_key'] = 'Notification strategy:';
 $string['auth_emailadminnotif_strategy'] = 'Defines the strategy to send the registration notifications. Available options are "first" admin user, "all" admin users or one specific admin user.';
 $string['auth_emailadminnotif_strategy_first'] = 'First admin user';
 $string['auth_emailadminnotif_strategy_all'] = 'All admin users';
+$string['auth_emailadminnotif_strategy_allupdate'] = 'All admins and users with user update capability';
 
 $string['pluginname'] = 'Email-based self-registration with admin confirmation';

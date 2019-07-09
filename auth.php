@@ -29,6 +29,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/authlib.php');
+require_once($CFG->libdir.'/accesslib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once('classes/message.class.php');
 
@@ -42,6 +43,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'emailadmin';
+        $this->config = get_config('auth_'.$this->authtype);
     }
 
     /* Backward compatible constructor. */
@@ -271,7 +273,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      */
     public function send_confirmation_email_support($user) {
         global $CFG;
-        $config = get_config('auth/emailadmin');
+        $config = $this->config;
 
         $site = get_site();
         $supportuser = core_user::get_support_user();
@@ -304,15 +306,20 @@ class auth_plugin_emailadmin extends auth_plugin_base {
 
         // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
         $admins = get_admins();
+
+        if (!isset($config->notif_strategy)) {
+            $config->notif_strategy = -1;
+        }
+        $config->notif_strategy = intval($config->notif_strategy);
+
+        if ($config->notif_strategy == -3 || $config->notif_strategy >= 0) {
+            $admins = array_merge($admins, get_users_by_capability(context_system::instance(), 'moodle/user:update'));
+        }
+
         $return = false;
         $admin_found = false;
 
         // Send message to fist admin (main) only. Remove "break" for all admins.
-        if (!isset($config->notif_strategy)) {
-            $config->notif_strategy = -1;
-        }
-
-        $config->notif_strategy = intval($config->notif_strategy);
         $send_list = array();
         foreach ($admins as $admin) {
             error_log(print_r( $config->notif_strategy . ":" . $admin->id, true ));
@@ -389,11 +396,9 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         global $CFG, $DB;
 
         $result = '';
-        if ($fields = $DB->get_records('user_info_field')) {
-            foreach ($fields as $field) {
-                $fieldobj = new profile_field_base($field->id, $user->id);
-                $result .= format_string($fieldobj->field->name.':') . ' ' . $fieldobj->display_data() . PHP_EOL;
-            }
+        $fields = profile_get_user_fields_with_data($user->id);
+        foreach ($fields as $field) {
+            $result .= format_string($field->field->shortname.':') . ' ' . $field->display_data() . PHP_EOL;
         }
 
         return $result;
