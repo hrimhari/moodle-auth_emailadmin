@@ -390,11 +390,9 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         global $CFG, $DB;
 
         $result = '';
-        if ($fields = $DB->get_records('user_info_field')) {
-            foreach ($fields as $field) {
-                $fieldobj = new profile_field_base($field->id, $user->id);
-                $result .= format_string($fieldobj->field->name.':') . ' ' . $fieldobj->display_data() . PHP_EOL;
-            }
+        $fields = profile_get_user_fields_with_data($user->id);
+        foreach ($fields as $field) {
+            $result .= format_string($field->field->shortname.':') . ' ' . $field->display_data() . PHP_EOL;
         }
 
         return $result;
