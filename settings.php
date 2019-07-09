@@ -51,7 +51,7 @@ if ($ADMIN->fulltree) {
         new lang_string('auth_emailadminnotif_strategy', 'auth_emailadmin'), -1, $options));
 
     // Display locking / mapping of profile fields.
-    $authplugin = get_auth_plugin('email');
+    $authplugin = get_auth_plugin('emailadmin');
     display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,
             get_string('auth_fieldlocks_help', 'auth'), false, false);
 }

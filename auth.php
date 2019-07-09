@@ -42,6 +42,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'emailadmin';
+        $this->config = get_config('auth_'.$this->authtype);
     }
 
     /* Backward compatible constructor. */
