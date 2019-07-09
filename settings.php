@@ -39,9 +39,10 @@ if ($ADMIN->fulltree) {
         new lang_string('auth_emailadminrecaptcha_key', 'auth_emailadmin'),
         new lang_string('auth_emailadminrecaptcha', 'auth_emailadmin'), 0, $options));
     $options = array('-1' => get_string("auth_emailadminnotif_strategy_first", "auth_emailadmin"), 
-        '-2' => get_string("auth_emailadminnotif_strategy_all", "auth_emailadmin")
+        '-2' => get_string("auth_emailadminnotif_strategy_all", "auth_emailadmin"),
+        '-3' => get_string("auth_emailadminnotif_strategy_allupdate", "auth_emailadmin")
         );
-    $admins = get_admins();
+    $admins = array_merge(get_admins(), get_users_by_capability(context_system::instance(), 'moodle/user:update'));
     foreach ($admins as $admin) {
         $options[$admin->id] = $admin->username;
     }
