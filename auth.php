@@ -230,38 +230,11 @@ class auth_plugin_emailadmin extends auth_plugin_base {
     }
 
     /**
-     * Processes and stores configuration data for this authentication plugin.
-     */
-    public function process_config($config) {
-        // Set to defaults if undefined.
-        if (!isset($config->recaptcha)) {
-            $config->recaptcha = false;
-        }
-
-        /*
-         *  -1: First admin user found (default)
-         *  -2: All admin users
-         * >=0: Specific user id
-         */
-        if (!isset($config->notif_strategy) || !is_numeric($config->notif_strategy) || $config->notif_strategy < -2) {
-            $config->notif_strategy = -1; // Default: first admin user found.
-        }
-
-        // Save settings.
-        set_config('recaptcha', $config->recaptcha, 'auth/emailadmin');
-        set_config('notif_strategy', $config->notif_strategy, 'auth/emailadmin');
-        return true;
-    }
-
-    /**
      * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
      * @return bool
      */
     public function is_captcha_enabled() {
-        global $CFG;
-        return isset($CFG->recaptchapublickey) &&
-            isset($CFG->recaptchaprivatekey) &&
-            get_config("auth/{$this->authtype}", 'recaptcha');
+        return get_config("auth_{$this->authtype}", 'recaptcha');
     }
 
     /**
