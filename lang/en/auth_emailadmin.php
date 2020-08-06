@@ -104,3 +104,4 @@ $string['auth_emailadminnotif_strategy_all'] = 'All admin users';
 $string['auth_emailadminnotif_strategy_allupdate'] = 'All admins and users with user update capability';
 
 $string['pluginname'] = 'Email-based self-registration with admin confirmation';
+$string['privacy:metadata'] = 'The Email Admin plugin does not store user data.';
