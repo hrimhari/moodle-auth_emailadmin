@@ -102,5 +102,6 @@ $string['auth_emailadminnotif_strategy'] = 'Defines the strategy to send the reg
 $string['auth_emailadminnotif_strategy_first'] = 'First admin user';
 $string['auth_emailadminnotif_strategy_all'] = 'All admin users';
 $string['auth_emailadminnotif_strategy_allupdate'] = 'All admins and users with user update capability';
+$string['auth_emailadminawaitingapproval'] = 'Your account is awaiting admin approval.';
 
 $string['pluginname'] = 'Email-based self-registration with admin confirmation';
