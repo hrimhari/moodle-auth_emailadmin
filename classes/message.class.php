@@ -58,12 +58,13 @@ class message {
         $supportuser = \core_user::get_support_user();
     
         $data = new \stdClass();
-        $data->firstname = fullname($user);
+        $data->firstname = format_string($user->firstname);
+        $data->lastname  = format_string($user->lastname);
         $data->sitename  = format_string($site->fullname);
         $data->admin     = generate_email_signoff();
     
         $use_lang = message::get_user_language($user);
-        $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', format_string($site->fullname), $use_lang);
+        $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject', 'auth_emailadmin', $data, $use_lang);
     
         $username = urlencode($user->username);
         $username = str_replace('.', '%2E', $username); // Prevent problems with trailing dots.
