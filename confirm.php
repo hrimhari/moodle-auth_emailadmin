@@ -88,7 +88,7 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         $PAGE->set_heading($COURSE->fullname);
         echo $OUTPUT->header();
         echo $OUTPUT->box_start('generalbox centerpara boxwidthnormal boxaligncenter');
-        echo "<h3>". fullname($USER) . "</h3>\n";
+        echo "<h3>". fullname($user) . "</h3>\n";
         echo "<p>".get_string("confirmed")."</p>\n";
         echo $OUTPUT->single_button("$CFG->wwwroot/course/", get_string('courses'));
         echo $OUTPUT->box_end();
