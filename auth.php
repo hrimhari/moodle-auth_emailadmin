@@ -168,6 +168,9 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $user = get_complete_user_data('username', $username);
 
         if (!empty($user)) {
+            require_login();
+            require_capability('moodle/user:update', context_system::instance());
+
             if ($user->confirmed) {
                 return AUTH_CONFIRM_ALREADY;
 
