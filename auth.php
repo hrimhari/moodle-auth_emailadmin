@@ -62,8 +62,22 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      */
     public function user_login ($username, $password) {
         global $CFG, $DB;
+
         if ($user = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id))) {
-            return validate_internal_user_password($user, $password);
+            $validated = validate_internal_user_password($user, $password);
+            if ($validated) {
+	        if (empty($user->confirmed)) {
+                    $failurereason = AUTH_LOGIN_UNAUTHORISED;
+
+                    // Trigger login failed event.
+                    $event = \core\event\user_login_failed::create(array('userid' => $user->id,
+                        'other' => array('username' => $user->username, 'reason' => $failurereason)));
+                    $event->trigger();
+		    redirect(new moodle_url('/login/index.php'),get_string('auth_emailadminawaitingapproval', 'auth_emailadmin'));
+                } else {
+		    return $validated;
+		}
+            }
         }
         return false;
     }
