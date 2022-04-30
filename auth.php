@@ -327,7 +327,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
 
             $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject',
                                                         'auth_emailadmin',
-                                                        format_string($site->fullname),
+                                                        $data,
                                                         $use_lang);
 
             $message     = get_string_manager()->get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data, $use_lang);
@@ -360,7 +360,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
 
                     $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject',
                                                                 'auth_emailadmin',
-                                                                format_string($site->fullname),
+                                                                $data,
                                                                 $use_lang);
 
                     $message     = get_string_manager()->get_string('auth_emailadminconfirmation', 'auth_emailadmin', $data, $use_lang);

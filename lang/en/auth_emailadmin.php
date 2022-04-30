@@ -101,7 +101,7 @@ You can also confirm accounts from within Moodle by going to
 Site Administration -> Users
 
 ';
-$string['auth_emailadminconfirmationsubject'] = '{$a}: account confirmation';
+$string['auth_emailadminconfirmationsubject'] = '{$a->sitename}: Account confirmation {$a->firstname} {$a->lastname}';
 $string['auth_emailadminconfirmsent'] = '<p>
 Your account has been registered and is pending confirmation by the administrator. You should expect to either receive a confirmation or to be contacted for further clarification.</p>
 ';
