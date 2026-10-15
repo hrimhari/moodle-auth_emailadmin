@@ -31,7 +31,6 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->libdir.'/accesslib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
-require_once('classes/message.class.php');
 
 /**
  * Email authentication plugin.
@@ -102,6 +101,21 @@ class auth_plugin_emailadmin extends auth_plugin_base {
     }
 
     /**
+     * Return the signup form used on /login/signup.php.
+     *
+     * This site derives the username from the email address, so the plugin
+     * ships its own form without a separate username field (the old server
+     * side patch of this form is replaced by this class).
+     *
+     * @return moodleform the signup form
+     */
+    public function signup_form() {
+        global $CFG;
+        require_once($CFG->dirroot.'/login/signup_form.php');
+        return new \auth_emailadmin\signup_form(null, null, 'post', '', array('autocomplete' => 'on'));
+    }
+
+    /**
      * Sign up a new user ready for confirmation.
      * Password is passed in plaintext.
      *
@@ -111,6 +125,18 @@ class auth_plugin_emailadmin extends auth_plugin_base {
     public function user_signup($user, $notify=true) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
+
+        // The signup form has no username field: derive the username from
+        // the email address (same behaviour as the old server side patch).
+        require_once($CFG->dirroot.'/auth/emailadmin/classes/signup_form.php');
+        if (empty($user->username)) {
+            $user->username = \auth_emailadmin\signup_form::username_from_email($user->email);
+        }
+        // Defense in depth: the user must end up on this auth plugin even if
+        // the signup data was not passed through signup_setup_new_user().
+        if (empty($user->auth)) {
+            $user->auth = $this->authtype;
+        }
 
         $user->password = hash_internal_user_password($user->password);
 
@@ -180,7 +206,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
                 if ($user->firstaccess == 0) {
                     $DB->set_field("user", "firstaccess", time(), array("id" => $user->id));
                 }
-                \auth\emailadmin\message::send_confirmation_email_user($user);
+                \auth_emailadmin\message::send_confirmation_email_user($user);
                 return AUTH_CONFIRM_OK;
             }
         } else {
@@ -232,18 +258,6 @@ class auth_plugin_emailadmin extends auth_plugin_base {
     }
 
     /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param array $page An object containing all the data for this page.
-     */
-    public function config_form($config, $err, $user_fields) {
-        include("config.html");
-    }
-
-    /**
      * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
      * @return bool
      */
@@ -255,7 +269,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
      * Send email to admin with confirmation text and activation link for
      * new user.
      *
-     * @param user $user A {@link $USER} object
+     * @param user $user A user object
      * @return bool Returns true if mail was sent OK to *any* admin and false if otherwise.
      */
     public function send_confirmation_email_support($user) {
@@ -306,10 +320,9 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $return = false;
         $admin_found = false;
 
-        // Send message to fist admin (main) only. Remove "break" for all admins.
+        // Send message to first admin (main) only. Remove "break" for all admins.
         $send_list = array();
         foreach ($admins as $admin) {
-            error_log(print_r( $config->notif_strategy . ":" . $admin->id, true ));
             if ($config->notif_strategy < 0 || $config->notif_strategy == $admin->id) {
                 $admin_found = true;
             }
@@ -323,7 +336,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
 
         $errors = array();
         foreach ($send_list as $admin) {
-            $use_lang = \auth\emailadmin\message::get_user_language($admin);
+            $use_lang = !empty($admin->lang) ? $admin->lang : current_language();
 
             $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject',
                                                         'auth_emailadmin',
@@ -353,10 +366,10 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         }
 
         if ($error != '') {
-            error_log($error);
+            debugging($error, DEBUG_NORMAL);
             foreach ($admins as $admin) {
                 if (!in_array($admin->username, $errors)) {
-                    $use_lang = \auth\emailadmin\message::get_user_language($admin);
+                    $use_lang = !empty($admin->lang) ? $admin->lang : current_language();
 
                     $subject = get_string_manager()->get_string('auth_emailadminconfirmationsubject',
                                                                 'auth_emailadmin',
@@ -377,7 +390,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
     /**
      * Return an array with custom user properties.
      *
-     * @param user $user A {@link $USER} object
+     * @param user $user A user object
      */
     public function list_custom_fields($user) {
         global $CFG, $DB;

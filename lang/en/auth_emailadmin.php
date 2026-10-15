@@ -116,3 +116,11 @@ $string['auth_emailadminawaitingapproval'] = 'Your account is awaiting admin app
 
 $string['pluginname'] = 'Email-based self-registration with admin confirmation';
 $string['privacy:metadata'] = 'The Email Admin plugin does not store user data.';
+
+// Signup form (email-as-username), added in 1.5.0.
+// NOTE: 'createuserandpass' existed in core (moodle.php) up to Moodle 3.11 and
+// was removed in Moodle 4.x. The plugin form references it, so the plugin now
+// ships its own definition. Existing language customisations still override it.
+$string['createuserandpass'] = 'Choose your sign-up details';
+$string['usernamefromemail'] = 'Sign-in name';
+$string['usernamefromemail_help'] = 'You will sign in with this email address. Your username is derived from it automatically.';
