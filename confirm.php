@@ -40,12 +40,12 @@ $PAGE->set_url('/auth/emailadmin/confirm.php');
 $PAGE->set_context(context_system::instance());
 
 if (empty($CFG->registerauth)) {
-    print_error('cannotusepage2');
+    throw new \moodle_exception('cannotusepage2');
 }
 $authplugin = get_auth_plugin($CFG->registerauth);
 
 if (!$authplugin->can_confirm()) {
-    print_error('cannotusepage2');
+    throw new \moodle_exception('cannotusepage2');
 }
 
 if (!empty($data) || (!empty($p) && !empty($s))) {
@@ -80,7 +80,7 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         // The admin confirmed the account.
 
         if (!$user = get_complete_user_data('username', $username)) {
-            print_error('cannotfinduser', '', '', s($username));
+            throw new \moodle_exception('cannotfinduser', '', '', s($username));
         }
 
         $PAGE->navbar->add(get_string("confirmed"));
@@ -96,10 +96,10 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         exit;
     } else {
         mtrace("Confirm returned: ". $confirmed);
-        print_error('invalidconfirmdata');
+        throw new \moodle_exception('invalidconfirmdata');
     }
 } else {
-    print_error("errorwhenconfirming");
+    throw new \moodle_exception("errorwhenconfirming");
 }
 
 redirect("$CFG->wwwroot/");
