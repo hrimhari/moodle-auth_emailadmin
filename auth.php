@@ -158,7 +158,7 @@ class auth_plugin_emailadmin extends auth_plugin_base {
         $event->trigger();
 
         if (! $this->send_confirmation_email_support($user)) {
-            print_error('auth_emailadminnoemail', 'auth_emailadmin');
+            throw new \moodle_exception('auth_emailadminnoemail', 'auth_emailadmin');
         }
 
         if ($notify) {
